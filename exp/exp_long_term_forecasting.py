@@ -164,25 +164,24 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                 if self.args.use_amp:
                     with torch.cuda.amp.autocast():
                         if self.args.output_attention:
-                            outputs, loss_IB, _ = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+                            outputs, loss_IB, final_output = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
                         else:
-                            outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+                            outputs, loss_IB, final_output = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
 
                         f_dim = -1 if self.args.features == 'MS' else 0
-                        outputs = outputs[:, -self.args.pred_len:, f_dim:]
+                        # outputs is already sliced for pred_len in the model's forward method
                         batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
                         loss = criterion(outputs, batch_y) + loss_IB
                         train_loss.append(loss.item())
                 else:
                     if self.args.output_attention:
-                        outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+                        outputs, loss_IB, final_output = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
                     else:
-                        outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+                        outputs, loss_IB, final_output = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
 
                     f_dim = -1 if self.args.features == 'MS' else 0
-                    outputs = outputs[:, -self.args.pred_len:, f_dim:]
                     batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
-                    loss = criterion(outputs, batch_y)
+                    loss = criterion(outputs, batch_y) + loss_IB
                     train_loss.append(loss.item())
 
                 if (i + 1) % 100 == 0:

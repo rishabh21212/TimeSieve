@@ -2,6 +2,9 @@
 
 ## Next Steps:
 
+
+NOTE : FOR LONG TERM FORECASTING, WE HAVE FIXED THE TUPLE ERROR, BUT FOR OTHER TASKS, THAT NEEDS TO BE FIXED, PLEASE LOOK AT LONG TERM FORECASTING CODE AND DO THE SAME IF WE REQUIRE OTHER TASKS.
+
 ### 1. Verify Full Functionality After Training(TBD)
 
 Run the following command to validate the changes:
